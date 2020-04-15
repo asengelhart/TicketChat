@@ -9,6 +9,14 @@ function renderAllTickets(ticketsObject) {
   return result;
 }
 
+function toggleHide(element) {
+  const hiddenClass = /\ ?hide/;
+  if(element.className.match(hiddenClass)) {
+    element.className = element.className.replace(hiddenClass, " ");
+  } else {
+    element.className += " hide";
+  }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Loaded!");
