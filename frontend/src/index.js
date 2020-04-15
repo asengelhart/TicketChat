@@ -1,7 +1,23 @@
+const ticketContainer = document.getElementById('ticket-container');
+
+function renderAllTickets(ticketsObject) {
+  const tickets = ticketsObject.map(ticketObject => new Ticket(ticketObject));
+  let result = ``;
+  for(const ticket of tickets) {
+    result += ticket.render();
+  }
+  return result;
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Loaded!");
-  fetch("http://localhost:3000/index")
+  fetch("http://localhost:3000/tickets")
   .then(r => r.json())
-  .then(json => {document.body.innerHTML = `<p>${json.comment}</p>`})
-  .catch(() => {console.log("Something went wrong")})  
+  .then(json => {
+    console.log(json);
+    ticketContainer.innerHTML = renderAllTickets(json);
+    M.AutoInit();
+  })
+  .catch((e) => {console.log(e)})  
 });
