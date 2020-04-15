@@ -1,0 +1,12 @@
+.collapsible-body {
+  padding: 5px;
+}
+
+.ticket-header {
+  display: block;
+  padding: 5px;
+}
+
+.ticket-row {
+  margin-bottom: 5px;
+}
