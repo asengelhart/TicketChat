@@ -1,9 +1,21 @@
 class ApplicationController < ActionController::API
   def index
-    render json: {comment: "Should contain only ticket IDs and subjects"}
+    tickets = Ticket.all
+    render json: TicketSerializer.new(tickets).render_ticket()
   end
 
   def show
-    render json: {comment: "Should contain one ticket's full entry, nested with all comments"}
+    ticket = Ticket.find_by(id: params[:id])
+    render json: TicketSerializer.new(ticket).render_ticket()
+  end
+
+  def create
+
+  end
+
+  private
+
+  def ticket_params
+    params.require(:ticket).permit(:subject, :content, :urgency, :closed_at)
   end
 end
