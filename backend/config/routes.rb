@@ -1,3 +1,5 @@
 Rails.application.routes.draw do
-  get "/index", to: "application#index"
+  get "/tickets", to: "tickets#index"
+  get "/tickets/:id", to: "tickets#show"
+  post "/tickets", to: "tickets#create"
 end
