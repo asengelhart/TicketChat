@@ -136,6 +136,7 @@ class Ticket {
   static renderAllTickets() {
     API.fetchGet("http://localhost:3000/tickets")
     .then(ticketsObject => {
+      debugger
       const tickets = ticketsObject.map(ticketObject => new Ticket(ticketObject));
       let result = ``;
       for(const ticket of tickets) {
@@ -144,6 +145,6 @@ class Ticket {
       ticketContainer.innerHTML = result;
       Ticket.renderForm();
     })
-    .catch(error => {alert(error.message)})
+    //.catch(error => {alert(error.message)})
   }
 }

@@ -1,16 +1,17 @@
-class Api {
+class API {
 
   static path(endpoint) {
     return `http://localhost:3000/${endpoint}`;
   }
 
   static async fetchGet(endpoint) {
-    fetch(path(endpoint))
+    fetch(API.path(endpoint))
     .then(r => r.json())
   }
 
   static async fetchPost(endpoint, bodyObject) {
-    fetch(path(endpoint), Api.configObjectPost(bodyObject))
+    fetch(API.
+      path(endpoint), Api.configObjectPost(bodyObject))
     .then(r => r.json())
   }
 
