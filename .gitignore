@@ -25,4 +25,4 @@ backend/!/storage/.keep
 
 # Ignore master key for decrypting credentials and more.
 backend/config/master.key
-ProjectDocs/.
+ProjectDocs/*
