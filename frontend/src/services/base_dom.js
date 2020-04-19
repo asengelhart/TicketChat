@@ -1,6 +1,7 @@
 class BaseDOM {
   static initializeDOM() {
-    document.body.innerHTML = BaseDOM.renderNavBar() + BaseDOM.renderTicketContainer();
+    BaseDOM.renderNavBar()
+    BaseDOM.renderTicketContainer();
   }
 
   static toggleHide(element) {
@@ -12,27 +13,47 @@ class BaseDOM {
     }
   }
 
+  // found at https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+  static htmlToElement(html) {
+    const template = document.createElement('template');
+    html = html.trim();
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+
   static ticketContainer() {
     return document.getElementById('ticket-container');
   }
 
-  static renderTicketContainer() {
+  static ticketContainerTemplate() {
     return `
     <div class="container" id="ticket-container"></div>
     `
   }
+
+  static renderTicketContainer() {
+    document.body.appendChild(BaseDOM.htmlToElement(BaseDOM.ticketContainerTemplate()));
+  }
+
   static navBar() {
     return document.getElementById('nav-bar')
   }
   
-  static renderNavBar() {
+  static navBarTemplate() {
     return `
     <nav id="nav-bar">
       <div class="nav-wrapper teal">
         <a href="#" class="brand-logo">TicketChat</a>
+        <ul class="right>
+          <li id="login-link"></li>
+        </ul>
       </div> 
     </nav>
     `
+  }
+
+  static renderNavBar() {
+    document.body.appendChild(BaseDOM.htmlToElement(BaseDOM.navBarTemplate()));
   }
 
 }

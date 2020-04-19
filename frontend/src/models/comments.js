@@ -8,10 +8,11 @@ class Comment {
 
   render(atBottom = true) {
     const thisTicket = Ticket.findTicketId(this.ticket_id).getDOM().querySelector(".comments-container");
+    const template = BaseDOM.htmlToElement(this.template());
     if(atBottom) {
-      thisTicket.innerHTML += this.template();
+      thisTicket.appendChild(template);
     } else {
-      thisTicket.innerHTML = this.template() + thisTicket.innerHTML;
+      thisTicket.insertAdjacentElement('afterbegin', template);
     }
   }
 
@@ -29,9 +30,9 @@ class Comment {
   static renderForm(ticketId) {
     const thisTicket = Ticket.findTicketId(ticketId).getDOM();
     const commentsContainer = thisTicket.querySelector(".comments-container");
-    commentsContainer.innerHTML += Comment.formTemplate(ticketId);
-    const thisForm = document.getElementById(`create-comment-for-ticket-${ticketId}`);
-    thisForm.addEventListener('submit', Comment.createComment);
+    const form = BaseDOM.htmlToElement(Comment.formTemplate(ticketId));
+    commentsContainer.appendChild(form);
+    form.addEventListener('submit', Comment.createComment);
   }
 
   static formTemplate(ticketId) {

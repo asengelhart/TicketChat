@@ -14,7 +14,8 @@ class Ticket {
   getDOM() { return document.getElementById(`ticket-${this.id}`); }
 
   render() {
-    BaseDOM.ticketContainer().innerHTML += this.template();
+    const template = BaseDOM.htmlToElement(this.template());
+    BaseDOM.ticketContainer().appendChild(template);
     this.renderAllComments();
     Comment.renderForm(this.id);
   }
@@ -49,9 +50,9 @@ class Ticket {
   static renderForm() {
     //New ticket form should always render above all current tickets
     BaseDOM.ticketContainer().innerHTML = Ticket.formTemplate() + BaseDOM.ticketContainer().innerHTML;
+    Ticket.renderToggleTicketFormButton();
     const newForm = document.getElementById("create-ticket-form");
     newForm.addEventListener("submit", Ticket.submitTicket);
-    Ticket.renderToggleTicketFormButton();
   }
 
   static formContainer() {return document.getElementById('create-ticket-container')}
@@ -100,6 +101,7 @@ class Ticket {
   }
 
   static submitTicket(e) {
+    console.log("Ticket submitted");
     e.preventDefault();
 
     const form = e.target;
@@ -112,8 +114,8 @@ class Ticket {
         content: getVal('content')
       }
     }
-
-    Api.fetchPost("tickets", postObject)
+    debugger;
+    API.fetchPost("tickets", postObject)
     .then(newTicketObject => {
       //render new ticket above other tickets
       const newTicket = new Ticket(newTicketObject);
@@ -129,7 +131,8 @@ class Ticket {
   }
 
   static renderToggleTicketFormButton() {
-    BaseDOM.ticketContainer().innerHTML = Ticket.toggleTicketFormButtonTemplate() + BaseDOM.ticketContainer().innerHTML;
+    const form = BaseDOM.htmlToElement(Ticket.toggleTicketFormButtonTemplate())
+    BaseDOM.ticketContainer().insertAdjacentElement('afterbegin', form);
     Ticket.toggleTicketFormButton().addEventListener('click', () => { BaseDOM.toggleHide(Ticket.formContainer()) })
   }
 
