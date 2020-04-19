@@ -7,7 +7,7 @@ class CommentSerializer
     options = {
       :include => {
         :user => {:only => [:id, :username, :is_admin]},
-        :post => {:only => [:id, :subject]}
+        :ticket => {:only => [:id, :subject]}
       },
       :except => [:updated_at]
     }
