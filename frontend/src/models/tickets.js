@@ -16,7 +16,6 @@ class Ticket {
   render() {
     BaseDOM.ticketContainer().innerHTML += this.template();
     this.renderAllComments();
-    debugger;
     Comment.renderForm(this.id);
   }
 
