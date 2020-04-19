@@ -49,7 +49,8 @@ class Ticket {
 
   static renderForm() {
     //New ticket form should always render above all current tickets
-    BaseDOM.ticketContainer().innerHTML = Ticket.formTemplate() + BaseDOM.ticketContainer().innerHTML;
+    const form = BaseDOM.htmlToElement(Ticket.formTemplate());
+    BaseDOM.ticketContainer().insertAdjacentElement('afterbegin', form);
     Ticket.renderToggleTicketFormButton();
     const newForm = document.getElementById("create-ticket-form");
     newForm.addEventListener("submit", Ticket.submitTicket);
@@ -114,12 +115,12 @@ class Ticket {
         content: getVal('content')
       }
     }
-    debugger;
     API.fetchPost("tickets", postObject)
     .then(newTicketObject => {
       //render new ticket above other tickets
       const newTicket = new Ticket(newTicketObject);
-      BaseDOM.ticketContainer().innerHTML = newTicket.render() + BaseDOM.ticketContainer().innerHTML;
+      BaseDOM.ticketContainer().innerHTML = "";
+      Ticket.renderAllTickets();
     })
     .catch(error => {
       const message = `
@@ -151,5 +152,6 @@ class Ticket {
       ticket.render();
     }
     Ticket.renderForm();
+    M.AutoInit();
   }
 }
