@@ -1,36 +1,72 @@
 class Comment {
   constructor(options) {
-    this._id = options.id;
-    this._content = options.content;
-    this._ticket_id = options.ticket_id;
-    this._user = options.user;
+    this.id = options.id;
+    this.content = options.content;
+    this.ticket_id = options.ticket_id;
+    this.user = options.user;
   }
 
-  render() { 
+  render(atBottom = true) {
+    const thisTicket = Ticket.findTicketId(this.ticket_id).querySelector(".comments-container");
+    if(atBottom) {
+      thisTicket.innerHTML += this.template();
+    } else {
+      thisTicket.innerHTML = this.template() + thisTicket.innerHTML;
+    }
+  }
+  
+  template() { 
     return `
       <div class="row">
         <div class="col s8 blue">
-          <p>${this._user.username} writes:</p>
-          <p>${this._content}</p>
+          <p>${this.user.username} writes:</p>
+          <p>${this.content}</p>
         </div>
       </div>
     `
   }
 
-  static renderForm(postId) {
+  static renderTemplate(ticketId) {
+    const thisTicket = Ticket.findTicketId(ticketId);
+    thisTicket.innerHTML += Comment.formTemplate(ticketId);
+    const thisForm = document.getElementById(`create-comment-for-ticket-${ticketId}`);
+    thisForm.addEventListener('submit', Comment.createComment);
+  }
+
+  static formTemplate(ticketId) {
     return `
     <div class="row comment_form_container">
-    <form class="col s12 comment_form">
-      <input type="hidden" name="post_id" value="${postId}">
+    <form class="col s12 comment_form" id="create-comment-for-ticket-${ticketId}">
+      <input type="hidden" name="ticket_id" value="${ticketId}">
       <div class="row">
         <div class="input-field col s12">
           <textarea name="content" id="comment_content" class="materialize-textarea" placeholder="Comment"></textarea>
-          <label for="comment_content">Enter your comment here:</label>
+          <label for="comment_content" class="active">Enter your comment here:</label>
         </div>
       </div>
       <button type="submit" class="btn">Submit Comment</button>
     </form>
   </div>
   `
+  }
+
+  static createComment(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const getVal = (name) => form.elements.namedItem(name).value;
+
+    const postObject = {
+      comment: {
+        ticket_id: getVal("ticket_id"),
+        content: getVal("content")
+      }
+    }
+
+    API.fetchPost("comments", postObject)
+    .then(commentObject => {
+      const comment = new Comment(commentObject);
+      comment.render(false);
+    })
   }
 }

@@ -1,4 +1,6 @@
 class Ticket {
+  static all = [] //Thanks Adeja! Didn't know I could do this!
+
   constructor(options) {
     this.id = options.id;
     this.subject = options.subject;
@@ -6,9 +8,18 @@ class Ticket {
     this.user = options.user;
     this.urgency = options.urgency;
     this.comments = options.comments.map(commentObject => new Comment(commentObject));
+    Ticket.all.push(this);
   }
 
+  getDOM() { return document.getElementById(`ticket-${this.id}`); }
+
   render() {
+    BaseDOM.ticketContainer().innerHTML += this.template();
+    this.renderAllComments();
+    Comment.renderForm(this.id);
+  }
+
+  template() {
     return `
     <ul id="ticket-${this.id}" class="collapsible">
     <li>
@@ -18,10 +29,7 @@ class Ticket {
       </div>
       <div class="collapsible-body">
         <div class="ticket-content"><p>${this.content}</p></div>
-        <div class="comments-container">
-          ${this.renderAllComments()}
-          ${Comment.renderForm(this.id)}
-        </class>
+        <div class="comments-container"></div>
       </div>
     </li>
   </ul>
@@ -29,18 +37,19 @@ class Ticket {
   }
 
   renderAllComments() {
-    let result = ``
     if(this.comments) {
       for(const comment of this.comments) {
-        result += `${comment.render()}`
+        comment.render();
       }
     }
     return result;
   }
 
+  static findTicketId(id) { return Ticket.all.find(ticket => ticket.id == id); }
+
   static renderForm() {
     //New ticket form should always render above all current tickets
-    BaseDOM.ticketContainer().innerHTML = Ticket.formTemplate() + ticketContainer.innerHTML;
+    BaseDOM.ticketContainer().innerHTML = Ticket.formTemplate() + BaseDOM.ticketContainer().innerHTML;
     const newForm = document.getElementById("create-ticket-form");
     newForm.addEventListener("submit", Ticket.submitTicket);
     Ticket.renderToggleTicketFormButton();
@@ -50,12 +59,12 @@ class Ticket {
 
   static formTemplate() {
     return `
-    <div id="create_ticket_container" class="row hide">
-      <form id= "create_ticket_form" class="col s12">
+    <div id="create-ticket-container" class="row hide">
+      <form id= "create-ticket-form" class="col s12">
         <div class="row">
           <div class="input-field col s8">
             <input placeholder="What issue are you having?" type="text" name="ticket_subject" id="ticket_subject" class="validate">
-            <label for="ticket_subject">Subject</label>
+            <label for="ticket_subject" class="active">Subject</label>
           </div>
         </div>
         <p>How urgent is your issue?</p>
@@ -82,7 +91,7 @@ class Ticket {
         <div class="row">
           <div class="input-field col s12">
             <textarea class="materialize-textarea" name="content" id="content" placeholder="Describe your issue here"></textarea>
-            <label for="content">Describe your issue:</label>
+            <label for="content" class="active">Describe your issue:</label>
           </div>
         </div>
         <button type="submit" class="btn">Create Ticket</button>
@@ -109,7 +118,7 @@ class Ticket {
     .then(newTicketObject => {
       //render new ticket above other tickets
       const newTicket = new Ticket(newTicketObject);
-      BaseDOM.ticketContainer().innerHTML = newTicket.render() + ticketContainer.innerHTML;
+      BaseDOM.ticketContainer().innerHTML = newTicket.render() + BaseDOM.ticketContainer().innerHTML;
     })
     .catch(error => {
       const message = `
@@ -133,18 +142,14 @@ class Ticket {
     `
   }
 
-  static renderAllTickets() {
-    API.fetchGet("http://localhost:3000/tickets")
-    .then(ticketsObject => {
-      debugger
-      const tickets = ticketsObject.map(ticketObject => new Ticket(ticketObject));
-      let result = ``;
-      for(const ticket of tickets) {
-        result += ticket.render();
-      }
-      ticketContainer.innerHTML = result;
-      Ticket.renderForm();
-    })
-    //.catch(error => {alert(error.message)})
+  static async renderAllTickets() {
+    const ticketsObject = await API.fetchGet("tickets")
+    const tickets = ticketsObject.map(ticketObject => new Ticket(ticketObject));
+    let result = ``;
+    for(const ticket of tickets) {
+      result += ticket.render();
+    }
+    BaseDOM.ticketContainer().innerHTML = result;
+    Ticket.renderForm();
   }
 }

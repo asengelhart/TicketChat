@@ -5,14 +5,15 @@ class API {
   }
 
   static async fetchGet(endpoint) {
-    fetch(API.path(endpoint))
-    .then(r => r.json())
+    const resp = await fetch(API.path(endpoint));
+    const json = await resp.json();
+    return json;
   }
 
   static async fetchPost(endpoint, bodyObject) {
-    fetch(API.
-      path(endpoint), Api.configObjectPost(bodyObject))
-    .then(r => r.json())
+    const resp = await fetch(API.path(endpoint), Api.configObjectPost(bodyObject));
+    const json = await  resp.json();
+    return json;
   }
 
   static configObjectPost(bodyObject) {
