@@ -44,8 +44,8 @@ class BaseDOM {
     <nav id="nav-bar">
       <div class="nav-wrapper teal">
         <a href="#" class="brand-logo">TicketChat</a>
-        <ul class="right>
-          <li id="login-link"></li>
+        <ul class="right">
+          <li><a id="logout-link">Logout</a></li>
         </ul>
       </div> 
     </nav>
@@ -54,6 +54,7 @@ class BaseDOM {
 
   static renderNavBar() {
     document.body.appendChild(BaseDOM.htmlToElement(BaseDOM.navBarTemplate()));
+    this.navBar().addEventListener("click", User.logout);
   }
 
 }
