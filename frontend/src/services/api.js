@@ -5,13 +5,13 @@ class API {
   }
 
   static async fetchGet(endpoint) {
-    const resp = await fetch(API.path(endpoint));
+    const resp = await fetch(this.path(endpoint), this.configObjectGet());
     const json = await resp.json();
     return json;
   }
 
   static async fetchPost(endpoint, bodyObject) {
-    const resp = await fetch(API.path(endpoint), API.configObjectPost(bodyObject));
+    const resp = await fetch(this.path(endpoint), this.configObjectPost(bodyObject));
     const json = await  resp.json();
     return json;
   }
@@ -23,7 +23,19 @@ class API {
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
+      credentials: "include",
       body: JSON.stringify(bodyObject)
+    }
+  }
+
+  static configObjectGet() {
+    return {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      credentials: "include"
     }
   }
 }
