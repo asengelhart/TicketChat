@@ -11,7 +11,7 @@ class API {
   }
 
   static async fetchPost(endpoint, bodyObject) {
-    const resp = await fetch(API.path(endpoint), Api.configObjectPost(bodyObject));
+    const resp = await fetch(API.path(endpoint), API.configObjectPost(bodyObject));
     const json = await  resp.json();
     return json;
   }
@@ -20,7 +20,7 @@ class API {
     return {
       method: "POST",
       headers: {
-        "Content-Header": "application/json",
+        "Content-Type": "application/json",
         "Accept": "application/json"
       },
       body: JSON.stringify(bodyObject)
