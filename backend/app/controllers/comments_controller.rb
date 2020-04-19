@@ -9,18 +9,18 @@ class CommentsController < ApplicationController
   end
 
   def create
-    @comment = Comment.find_by(comment_params)
+    @comment = Comment.new(comment_params)
     @comment.update(user: current_user)
     if @comment.save
       render json: CommentSerializer.new(@comment).render_comment
     else
-      render json: {message: @comment.error}, status: :unprocessable_entity
+      render json: {message: @comment.errors.full_messages}, status: :unprocessable_entity
     end
   end
 
   private
 
   def comment_params
-    params.require(:comment).permit(:subject, :content, :post_id)
+    params.require(:comment).permit(:subject, :content, :ticket_id)
   end
 end
