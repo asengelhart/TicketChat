@@ -7,14 +7,14 @@ class Comment {
   }
 
   render(atBottom = true) {
-    const thisTicket = Ticket.findTicketId(this.ticket_id).querySelector(".comments-container");
+    const thisTicket = Ticket.findTicketId(this.ticket_id).getDOM().querySelector(".comments-container");
     if(atBottom) {
       thisTicket.innerHTML += this.template();
     } else {
       thisTicket.innerHTML = this.template() + thisTicket.innerHTML;
     }
   }
-  
+
   template() { 
     return `
       <div class="row">
@@ -26,9 +26,10 @@ class Comment {
     `
   }
 
-  static renderTemplate(ticketId) {
-    const thisTicket = Ticket.findTicketId(ticketId);
-    thisTicket.innerHTML += Comment.formTemplate(ticketId);
+  static renderForm(ticketId) {
+    const thisTicket = Ticket.findTicketId(ticketId).getDOM();
+    const commentsContainer = thisTicket.querySelector(".comments-container");
+    commentsContainer.innerHTML += Comment.formTemplate(ticketId);
     const thisForm = document.getElementById(`create-comment-for-ticket-${ticketId}`);
     thisForm.addEventListener('submit', Comment.createComment);
   }

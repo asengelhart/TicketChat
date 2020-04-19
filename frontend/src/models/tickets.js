@@ -16,6 +16,7 @@ class Ticket {
   render() {
     BaseDOM.ticketContainer().innerHTML += this.template();
     this.renderAllComments();
+    debugger;
     Comment.renderForm(this.id);
   }
 
@@ -42,7 +43,6 @@ class Ticket {
         comment.render();
       }
     }
-    return result;
   }
 
   static findTicketId(id) { return Ticket.all.find(ticket => ticket.id == id); }
@@ -145,11 +145,9 @@ class Ticket {
   static async renderAllTickets() {
     const ticketsObject = await API.fetchGet("tickets")
     const tickets = ticketsObject.map(ticketObject => new Ticket(ticketObject));
-    let result = ``;
     for(const ticket of tickets) {
-      result += ticket.render();
+      ticket.render();
     }
-    BaseDOM.ticketContainer().innerHTML = result;
     Ticket.renderForm();
   }
 }
