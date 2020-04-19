@@ -30,8 +30,9 @@ class Comment {
   static renderForm(ticketId) {
     const thisTicket = Ticket.findTicketId(ticketId).getDOM();
     const commentsContainer = thisTicket.querySelector(".comments-container");
-    const form = BaseDOM.htmlToElement(Comment.formTemplate(ticketId));
-    commentsContainer.appendChild(form);
+    const formContainer = BaseDOM.htmlToElement(Comment.formTemplate(ticketId));
+    commentsContainer.appendChild(formContainer);
+    const form = formContainer.querySelector("form");
     form.addEventListener('submit', Comment.createComment);
   }
 
@@ -64,7 +65,6 @@ class Comment {
         content: getVal("content")
       }
     }
-
     API.fetchPost("comments", postObject)
     .then(commentObject => {
       const comment = new Comment(commentObject);
