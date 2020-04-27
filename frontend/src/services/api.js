@@ -11,8 +11,17 @@ class API {
   }
 
   static async fetchPost(endpoint, bodyObject) {
+    console.log(endpoint);
     const resp = await fetch(this.path(endpoint), this.configObjectPost(bodyObject));
-    const json = await  resp.json();
+    if(!resp.ok) {
+      const respObj = await resp.json();
+      if(respObj.message) {
+        throw new Error(respObj.message);
+      } else {
+        throw new Error(resp.statusText);
+      }
+    }
+    const json = await resp.json();
     return json;
   }
 

@@ -18,6 +18,17 @@ class SessionsController < ApplicationController
     render json: render_current_user
   end
 
+  #This ought to be its own controller but I ran out of time
+  def create_user
+    @user = User.new(new_user_params)
+    if @user.save
+      session[:id] = @user.id
+      render json: render_current_user
+    else
+      render json: {message: @user.errors.full_messages}, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def render_current_user
@@ -34,4 +45,7 @@ class SessionsController < ApplicationController
     end
   end
 
+  def new_user_params
+    params.require(:user).permit(:username, :email, :password)
+  end
 end

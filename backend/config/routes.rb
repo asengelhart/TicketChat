@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   get "/logout", to: "sessions#destroy"
   get "/current_user", to: "sessions#show"
   post "/comments", to: "comments#create"
+  post "/users", to: "sessions#create_user"
 end

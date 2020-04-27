@@ -12,17 +12,28 @@ class User {
     return`
     <div id="login-modal" class="modal">
       <div class="modal-content">
-        <form id="login-form">
+        <form id="login-form" style="border-bottom-style: solid;">
           <input type="text" name="email" placeholder="Email" class="validate">
           <input type="password" name="password" placeholder="Password" class="validate">
           <button class="btn" type="submit">Login</button>
+        </form>
+        <form id="new-user-form">
+          <p>New user? Sign in here!</p>
+          <input type="text" name="user_username" placeholder="User Name" class="validate">
+          <input type="text" name="user_email" placeholder="User Email" class="validate">
+          <input type="password" name="user_password" placeholder="Password" class="validate">
+          <button class="btn" type="submit">Sign Up</button>
         </form>
       </div>
     </div>
     `
   }
 
-  static loginForm() { return document.getElementById("login-modal"); }
+  static loginAndNewUserForms() { return document.getElementById("login-modal"); }
+
+  static loginForm() { return document.getElementById("login-form"); }
+
+  static newUserForm() { return document.getElementById("new-user-form"); }
 
   static async checkLogin() {
     const userObj = await API.fetchGet("current_user");
@@ -37,10 +48,11 @@ class User {
   }
 
   static renderLoginForm() {
-    const loginForm = BaseDOM.htmlToElement(User.loginFormTemplate());
-    document.body.appendChild(loginForm);
-    loginForm.addEventListener("submit", this.login);
-    M.Modal.init(loginForm).open();
+    const loginForms = BaseDOM.htmlToElement(User.loginFormTemplate());
+    document.body.appendChild(loginForms);
+    this.loginForm().addEventListener("submit", this.login);
+    this.newUserForm().addEventListener("submit", this.newUser);
+    M.Modal.init(this.loginAndNewUserForms()).open();
   }
 
   static async login(e) {
@@ -56,13 +68,40 @@ class User {
       }
     }
 
-    const loginObject = await API.fetchPost("login", postObject);
-    if(loginObject.logged_in) {
+    try {
+      const loginObject = await API.fetchPost("login", postObject);
       User.currentUser = loginObject;
-      User.checkLogin();
-    } else {
+    } catch {
       alert("Login failed, please try again.");
-      User.renderLoginForm();
+    } finally {
+      User.checkLogin();
+    }
+  }
+
+  static async newUser(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const getVal = (name) => form.elements.namedItem(name).value;
+    const postObject = {
+      user: {
+        username: getVal("user_username"),
+        email: getVal("user_email"),
+        password: getVal("user_password")
+      }
+    }
+    debugger;
+    try {
+      const newUserObject = await API.fetchPost("users", postObject);
+      if(newUserObject.logged_in) {
+        User.currentUser = newUserObject;
+      } else {
+        alert("Login failed, please try again");
+      }
+    } catch(error) {
+      alert(error);
+    } finally {
+      User.checkLogin();
     }
   }
 
